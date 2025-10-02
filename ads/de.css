@@ -1,19 +1,20 @@
 #deutschland-ad {
-  position: relative;  /* wichtig, damit z-index greift */
-  z-index: 3;          /* höher als deine .stage::before (0) und .stage::after (1) */
-  margin: 20px auto;   /* zentriert + Abstand */
+  position: relative;
+  z-index: 3;
+  margin: 30px auto;
   display: flex;
   justify-content: center;
+  perspective: 1000px; /* für subtile 3D-Effekte */
 }
 
 #deutschland-ad .banner {
-  width: 400px;   /* schmal, hochkant */
-  height: 600px;  /* klassisches Skyscraper-Format */
-  background: #111;
+  width: 400px;
+  height: 600px;
+  background: linear-gradient(135deg, #1a1a1a, #222);
   color: #fff;
-  font-family: Arial, sans-serif;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255,255,255,0.05) inset;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,34 +22,50 @@
   text-align: center;
   cursor: pointer;
   overflow: hidden;
-  z-index: 9999;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#deutschland-ad .banner:hover {
+  transform: translateY(-10px) rotateX(3deg) rotateY(3deg);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.1) inset;
 }
 
 #deutschland-ad .banner img {
-  width: 100px;
-  margin-bottom: 20px;
-  border-radius: 10px;
+  width: 120px;
+  margin-bottom: 25px;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+#deutschland-ad .banner:hover img {
+  transform: scale(1.1);
 }
 
 #deutschland-ad .typing {
-  font-size: 18px;
-  font-weight: bold;
-  border-right: 2px solid #fff;
-  white-space: normal;         /* erlaubt Umbrüche */
-  word-break: break-word;      /* bricht Wörter */
-  overflow-wrap: break-word;   /* Fallback für Browser */
+  font-size: 20px;
+  font-weight: 600;
+  border-right: 2px solid #00e571;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: break-word;
   overflow: hidden;
+  margin-top: 15px;
+  letter-spacing: 0.5px;
+  color: #f0f0f0;
+  transition: color 0.3s ease;
 }
-/* From Uiverse.io by andrew-demchenk0 */ 
+
 #deutschland-ad .glitch {
   position: relative;
-  font-size: 25px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   line-height: 1.2;
   color: #fff;
-  letter-spacing: 5px;
+  letter-spacing: 4px;
   z-index: 1;
-  animation: shift 1s ease-in-out infinite alternate;
+  animation: shift 1.2s ease-in-out infinite alternate;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px #fff, 0 0 20px #8b00ff, 0 0 30px #00e571;
 }
 
 #deutschland-ad .glitch:before,
@@ -58,78 +75,36 @@
   position: absolute;
   top: 0;
   left: 0;
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 #deutschland-ad .glitch:before {
   animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
-  color: #8b00ff;
+  color: #ff00aa;
   z-index: -1;
 }
 
 #deutschland-ad .glitch:after {
   animation: glitch 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) reverse both infinite;
-  color: #00e571;
+  color: #00ffd5;
   z-index: -2;
 }
 
 @keyframes glitch {
-  0% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(-3px, 3px);
-  }
-
-  40% {
-    transform: translate(-3px, -3px);
-  }
-
-  60% {
-    transform: translate(3px, 3px);
-  }
-
-  80% {
-    transform: translate(3px, -3px);
-  }
-
-  to {
-    transform: translate(0);
-  }
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
 }
 
 @keyframes shift {
-  0%, 40%, 44%, 58%, 61%, 65%, 69%, 73%, 100% {
-    transform: skewX(0deg);
-  }
-
-  41% {
-    transform: skewX(10deg);
-  }
-
-  42% {
-    transform: skewX(-10deg);
-  }
-
-  59% {
-    transform: skewX(40deg) skewY(10deg);
-  }
-
-  60% {
-    transform: skewX(-40deg) skewY(-10deg);
-  }
-
-  63% {
-    transform: skewX(10deg) skewY(-5deg);
-  }
-
-  70% {
-    transform: skewX(-50deg) skewY(-20deg);
-  }
-
-  71% {
-    transform: skewX(10deg) skewY(-10deg);
-  }
+  0%, 40%, 44%, 58%, 61%, 65%, 69%, 73%, 100% { transform: skewX(0deg); }
+  41% { transform: skewX(5deg); }
+  42% { transform: skewX(-5deg); }
+  59% { transform: skewX(20deg) skewY(5deg); }
+  60% { transform: skewX(-20deg) skewY(-5deg); }
+  63% { transform: skewX(5deg) skewY(-2deg); }
+  70% { transform: skewX(-25deg) skewY(-10deg); }
+  71% { transform: skewX(5deg) skewY(-5deg); }
 }
-
