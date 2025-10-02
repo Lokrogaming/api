@@ -13,6 +13,7 @@
   text-align: center;
   cursor: pointer;
   overflow: hidden;
+  z-index: 9999;
 }
 
 #deutschland-ad .banner img {
@@ -27,4 +28,5 @@
   border-right: 2px solid #fff;
   white-space: nowrap;
   overflow: hidden;
+  
 }
