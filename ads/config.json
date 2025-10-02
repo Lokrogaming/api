@@ -1,0 +1,11 @@
+{
+  "ad_1234567890abcdef1234567890abcdef": {
+    "mode": "iframe",
+    "src": "https://ads.example.com/banner?id=abc123",
+    "width": 728,
+    "height": 90,
+    "sandbox": "allow-scripts allow-same-origin allow-popups",
+    "style": "display:block; width:100%; max-width:728px; height:90px; border:0;",
+    "attrs": { "loading": "lazy" }
+  }
+}
