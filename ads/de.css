@@ -1,3 +1,11 @@
+#deutschland-ad {
+  position: relative;  /* wichtig, damit z-index greift */
+  z-index: 3;          /* höher als deine .stage::before (0) und .stage::after (1) */
+  margin: 20px auto;   /* zentriert + Abstand */
+  display: flex;
+  justify-content: center;
+}
+
 #deutschland-ad .banner {
   width: 160px;   /* schmal, hochkant */
   height: 600px;  /* klassisches Skyscraper-Format */
