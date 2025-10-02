@@ -5,7 +5,9 @@
   container.innerHTML = `
     <div class="banner" onclick="window.open('https://dcs.lol/deutschland','_blank')">
       <img src="https://cdn.discordapp.com/icons/1416051067468382218/3fd502446c4f0be83fe7a30530d8148e.png?size=256" alt="Logo">
+      <div data-glitch=".lol/deutschland" class="glitch">.lol/deutschland</div>
       <div class="typing" id="typing"></div>
+      
     </div>
   `;
 
