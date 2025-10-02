@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vrypting Demo</title>
+<style>
+:root {
+  --bg: #0d0d0d;
+  --text: #f2f2f2;
+  --accent: #66e3ff;
+  --btn-bg: #111;
+  --btn-hover: #222;
+  --radius: 12px;
+}
+
+body {
+  margin:0;
+  font-family: 'Arial', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+  padding:20px;
+}
+
+.container {
+  background: rgba(255,255,255,0.05);
+  padding: 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 0 30px rgba(0,0,0,0.7);
+  max-width: 600px;
+  width:100%;
+}
+
+h1 {
+  text-align:center;
+  color: var(--accent);
+}
+
+textarea, input {
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius: var(--radius);
+  border: 1px solid #333;
+  background: #111;
+  color: var(--text);
+  resize: vertical;
+}
+
+button {
+  background: var(--btn-bg);
+  color: var(--text);
+  border: none;
+  padding: 10px 16px;
+  margin-top: 8px;
+  border-radius: var(--radius);
+  cursor:pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: var(--btn-hover);
+  color: var(--accent);
+}
+
+.row {
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+
+label {
+  font-weight:bold;
+  margin-top:12px;
+  display:block;
+}
+
+.toast {
+  position: fixed;
+  bottom:20px;
+  left:50%;
+  transform: translateX(-50%);
+  background:#66e3ff;
+  color:#000;
+  padding:8px 12px;
+  border-radius:8px;
+  opacity:0;
+  transition: opacity 0.3s;
+}
+
+.toast.show {
+  opacity:1;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Vrypting Demo</h1>
+
+  <label for="plaintext">Text zum Verschlüsseln</label>
+  <textarea id="plaintext" rows="4" placeholder="Hier Text eingeben..."></textarea>
+  <div class="row">
+    <button id="encodeBtn">🔐 Verschlüsseln</button>
+    <button id="clearEncodeBtn">🧹 Leeren</button>
+  </div>
+  <label for="encoded">Verschlüsselte Nachricht</label>
+  <textarea id="encoded" rows="3" placeholder="Ausgabe erscheint hier..." readonly></textarea>
+
+  <hr style="margin:20px 0; border-color:#333;">
+
+  <label for="decodeInput">Text zum Entschlüsseln (Base64:Passwort)</label>
+  <textarea id="decodeInput" rows="4" placeholder="Hier verschlüsselte Nachricht einfügen..."></textarea>
+  <div class="row">
+    <button id="decodeBtn">🔓 Entschlüsseln</button>
+    <button id="clearDecodeBtn">🧹 Leeren</button>
+  </div>
+  <label for="decoded">Entschlüsselter Text</label>
+  <textarea id="decoded" rows="3" placeholder="Ausgabe erscheint hier..." readonly></textarea>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- GH Pages API Scripts -->
+<script src="https://lokrogaming.github.io/api/crypt/crypting-ec.js"></script>
+<script src="https://lokrogaming.github.io/api/crypt/crypting-dc.js"></script>
+
+<script>
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),1500);
+}
+
+// Encode Button
+document.getElementById('encodeBtn').addEventListener('click', async ()=>{
+  const text = document.getElementById('plaintext').value.trim();
+  if(!text) return showToast("Kein Text zum Verschlüsseln 😅");
+
+  const pw = window.cryptingEncoder.generatePassword();
+  const enc = await window.cryptingEncoder.encrypt(pw, text);
+  const combined = window.cryptingEncoder.combineOutput(enc, pw);
+  document.getElementById('encoded').value = combined;
+  showToast("Verschlüsselt ✅");
+});
+
+// Clear Encode
+document.getElementById('clearEncodeBtn').addEventListener('click', ()=>{
+  document.getElementById('plaintext').value = '';
+  document.getElementById('encoded').value = '';
+});
+
+// Decode Button
+document.getElementById('decodeBtn').addEventListener('click', async ()=>{
+  const combined = document.getElementById('decodeInput').value.trim();
+  if(!combined.includes(":")) return showToast("Ungültiges Format 😬");
+
+  const [b64,pw] = combined.split(":");
+  try{
+    const decoded = await window.cryptingDecoder.decrypt(pw,b64);
+    document.getElementById('decoded').value = decoded;
+    showToast("Entschlüsselt ✅");
+  }catch(e){
+    showToast("Fehler beim Entschlüsseln ❌");
+  }
+});
+
+// Clear Decode
+document.getElementById('clearDecodeBtn').addEventListener('click', ()=>{
+  document.getElementById('decodeInput').value = '';
+  document.getElementById('decoded').value = '';
+});
+</script>
+
+</body>
+</html>
