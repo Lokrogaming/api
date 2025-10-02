@@ -1,5 +1,5 @@
 // vrypting-decoder.js
-window.VryptingDecoder = (function() {
+window.cryptingDecoder = (function() {
   const PBKDF2_ITER = 100000;
   const SALT_LEN = 16;
   const IV_LEN = 12;
