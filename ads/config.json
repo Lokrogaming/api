@@ -1,10 +1,10 @@
 {
   "ad_1234567890abcdef1234567890abcdef": {
-    "mode": "inline",
-    "img": "https://yukicraft.net/logo.png",
-    "link": "https://yukicraft.net",
-    "alt": "Yukicraft Werbung",
-    "style": "display:block; width:300px; height:250px; cursor:pointer; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);",
+    "mode": "iframe",
+    "img": "https://lokrogaming.github.io/api/ads/deAdImg1.png",
+    "link": "https://lokrogaming.github.io/de.html",
+    "alt": ".lol/deutschland Werbung",
+    "style": "display:block; width:300px; height:250px; cursor:pointer; border-radius:8px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);border:none;",
     "attrs": { "loading": "lazy" }
   }
 }
