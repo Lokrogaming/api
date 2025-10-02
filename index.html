@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LokroGaming API</title>
+<style>
+:root {
+  --bg: #0d0d0d;
+  --text: #f2f2f2;
+  --accent: #66e3ff;
+  --card-bg: rgba(255,255,255,0.05);
+  --card-radius: 14px;
+  --nav-height: 60px;
+}
+
+/* Body & Layout */
+body {
+  margin:0;
+  font-family:'Arial', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.container {
+  max-width: 1000px;
+  margin: 80px auto 40px;
+  padding: 0 20px;
+}
+
+/* Top Navigation */
+.topnav {
+  position: fixed;
+  top:0;
+  left:0;
+  right:0;
+  height: var(--nav-height);
+  background: rgba(20,20,20,0.95);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+.topnav-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.topnav h1 {
+  margin:0;
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+/* API List Dropdown */
+.api-list {
+  position: relative;
+}
+
+.api-list button {
+  background: var(--accent);
+  border:none;
+  color:#000;
+  padding:6px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.api-list-content {
+  display:none;
+  position:absolute;
+  top:36px;
+  left:0;
+  background: var(--card-bg);
+  border-radius:8px;
+  min-width:200px;
+  max-height:300px;
+  overflow-y:auto;
+  box-shadow:0 4px 16px rgba(0,0,0,0.6);
+}
+
+.api-list-content a {
+  display:block;
+  padding:8px 12px;
+  color: var(--text);
+  text-decoration:none;
+}
+
+.api-list-content a:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.api-list:hover .api-list-content {
+  display:block;
+}
+
+/* Search */
+.topnav-right input[type="text"] {
+  padding:6px 12px;
+  border-radius:8px;
+  border:none;
+  outline:none;
+  font-size: 0.9rem;
+}
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  padding:20px;
+  border-radius: var(--card-radius);
+  margin:16px 0;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+pre {
+  background:#111;
+  padding:12px;
+  border-radius: var(--card-radius);
+  overflow-x:auto;
+}
+
+a {
+  color: var(--accent);
+  text-decoration:none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+h2 {
+  border-bottom:1px solid #333;
+  padding-bottom:4px;
+  margin-top:24px;
+  color: var(--accent);
+}
+
+ul { padding-left: 18px; }
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<div class="topnav">
+  <div class="topnav-left">
+    <div class="api-list">
+      <button>APIs ▼</button>
+      <div class="api-list-content" id="apiList">
+        <a href="#crypting">Crypting API</a>
+        
+        <!-- Weitere APIs hier einfügen -->
+      </div>
+    </div>
+    <h1>LokroGaming API</h1>
+  </div>
+  <div class="topnav-right">
+    <input type="text" id="apiSearch" placeholder="API suchen...">
+  </div>
+</div>
+
+<div class="container">
+  <p>Willkommen zur zentralen API-Übersicht. Hier findest du alle verfügbaren APIs von LokroGaming inkl. Docs, Usage und Hinweisen.</p>
+
+  <!-- Crypting API -->
+  <div class="card" id="crypting">
+    <h2>🔐 Crypting API</h2>
+    <p>Verschlüsselt und entschlüsselt Text clientseitig (AES-GCM + Base64), komplett ohne Backend.</p>
+    <h3>Einbindung:</h3>
+    <pre>
+&lt;script src="https://lokrogaming.github.io/api/crypt/crypting-ec.js"&gt;&lt;/script&gt;
+&lt;script src="https://lokrogaming.github.io/api/crypt/crypting-dc.js"&gt;&lt;/script&gt;
+    </pre>
+    <h3>Funktionen:</h3>
+    <ul>
+      <li><b>window.cryptingEncoder</b>: encrypt(), combineOutput(), generatePassword()</li>
+      <li><b>window.cryptingDecoder</b>: decrypt()</li>
+    </ul>
+    <h3>Usage Beispiel:</h3>
+    <pre>
+const pw = window.cryptingEncoder.generatePassword();
+const cipher = await window.cryptingEncoder.encrypt(pw, "Hallo Welt");
+const combined = window.cryptingEncoder.combineOutput(cipher, pw);
+
+const [b64, pw2] = combined.split(":");
+const plaintext = await window.cryptingDecoder.decrypt(pw2, b64);
+console.log(plaintext);
+    </pre>
+  </div>
+
+  <!-- Example API -->
+  <div style="display: none;" class="card" id="example">
+    <h2>🌐 Example API</h2>
+    <p>Hier könntest du z.B. Text analysieren, Filter anwenden oder andere Utility-Funktionen bereitstellen.</p>
+    <h3>Einbindung:</h3>
+    <pre>
+&lt;script src="https://lokrogaming.github.io/api/example-api.js"&gt;&lt;/script&gt;
+    </pre>
+    <h3>Funktionen:</h3>
+    <ul>
+      <li>window.exampleApi.doSomething()</li>
+      <li>window.exampleApi.analyzeText()</li>
+    </ul>
+    <h3>Usage Beispiel:</h3>
+    <pre>
+const result = window.exampleApi.doSomething("Test");
+console.log(result);
+    </pre>
+  </div>
+
+  <!-- Hinweise -->
+  <div class="card">
+    <h2>⚠ Hinweise</h2>
+    <ul>
+      <li>Alle APIs laufen clientseitig – kein Backend nötig.</li>
+      <li>Die Einbindung erfolgt via &lt;script&gt; Tag.</li>
+      <li>Achte auf sichere Handhabung von Passwörtern und sensiblen Daten.</li>
+      <li>Für große Datenmengen oder produktive Anwendungen empfehlen wir serverseitige Lösungen.</li>
+    </ul>
+  </div>
+</div>
+
+<script>
+// API-Suche
+const searchInput = document.getElementById('apiSearch');
+searchInput.addEventListener('input', () => {
+  const filter = searchInput.value.toLowerCase();
+  const links = document.querySelectorAll('.api-list-content a');
+  links.forEach(link => {
+    link.style.display = link.textContent.toLowerCase().includes(filter) ? 'block' : 'none';
+  });
+});
+</script>
+
+</body>
+</html>
