@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>LokroHook API Docs & Discord JSON</title>
+<link href="https://fonts.googleapis.com/css2?family=Whitney:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body {
+    font-family: 'Whitney','Arial',sans-serif;
+    background-color: #36393f;
+    color: #dcddde;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height:100vh;
+  }
+  h1,h2,h3 { color:#fff; }
+  .container { width:90%; max-width:800px; background:#2f3136; border-radius:8px; padding:25px; margin:25px 0; box-shadow:0 0 20px rgba(0,0,0,0.3); }
+  pre { background:#202225; padding:12px; border-radius:6px; overflow-x:auto; color:#fff; }
+  code { background:#202225; padding:2px 4px; border-radius:4px; color:#fff; }
+  input, textarea { width:100%; background:#202225; border:1px solid #202225; border-radius:4px; padding:8px; color:#dcddde; margin-top:6px; }
+  button { padding:8px 12px; background:#5865f2; border:none; border-radius:4px; color:#fff; cursor:pointer; margin-top:10px; }
+  button:hover { background:#4752c4; }
+  label { display:block; margin-top:10px; }
+</style>
+</head>
+<body>
+
+<h1>📄 LokroHook API Docs & Discord JSON</h1>
+
+<div class="container">
+  <h2>Einleitung</h2>
+  <p>
+    Die <strong>LokroHook API</strong> erlaubt das einfache Senden von Nachrichten an Discord Webhooks
+    direkt aus dem Browser. Unterstützt werden normale Nachrichten und Embeds.
+    Auf dieser Seite siehst du auch Beispiele, wie <strong>Discord JSON</strong> aussehen muss.
+  </p>
+
+  <h2>Installation</h2>
+  <pre><code>&lt;script type="module"&gt;
+import { configMsg, sendMsg } from 'https://lokrogaming.github.io/api/lokrohook/lokrohook-api.js';
+&lt;/script&gt;</code></pre>
+
+  <h2>API Funktionen</h2>
+  <h3>configMsg(hookURL, msgJSON)</h3>
+  <p>Erstellt eine konfigurierbare Nachricht.</p>
+  <h4>msgJSON Felder:</h4>
+  <ul>
+    <li><code>content</code> – Textnachricht</li>
+    <li><code>embed</code> – optionales Embed-Objekt</li>
+  </ul>
+
+  <h3>sendMsg(configuredMsg, hooksArray)</h3>
+  <p>Sendet die Nachricht an einen oder mehrere Webhooks.</p>
+
+  <h2>Discord JSON Beispiele</h2>
+
+  <h3>1️⃣ Einfache Nachricht</h3>
+  <pre><code>{
+  "content": "Hallo Welt!"
+}</code></pre>
+
+  <h3>2️⃣ Nachricht mit Embed</h3>
+  <pre><code>{
+  "content": "Optionaler Text",
+  "embeds": [
+    {
+      "title": "Embed Titel",
+      "description": "Beschreibung des Embeds",
+      "color": 5763719,
+      "image": { "url": "https://lokrogaming.github.io/src/assets/icon.png" }
+    }
+  ]
+}</code></pre>
+
+  <h3>3️⃣ Interaktive Demo</h3>
+  <label>Webhook URL:</label>
+  <input type="text" id="webhookInput" placeholder="https://discord.com/api/webhooks/...">
+  <label>Nachricht:</label>
+  <textarea id="messageInput" rows="2" placeholder="Textnachricht"></textarea>
+  <label>Embed JSON (optional):</label>
+  <textarea id="embedInput" rows="5" placeholder='{"title":"Titel","desc":"Beschreibung","color":"#5865f2","image":"https://..."}'></textarea>
+  <button id="sendBtn">Nachricht senden</button>
+
+  <h4>Generiertes Discord JSON:</h4>
+  <pre id="generatedJSON">{}</pre>
+
+</div>
+
+<script type="module">
+import { configMsg, sendMsg } from './lokrohook-api.js';
+
+const webhookInput = document.getElementById('webhookInput');
+const messageInput = document.getElementById('messageInput');
+const embedInput = document.getElementById('embedInput');
+const sendBtn = document.getElementById('sendBtn');
+const generatedJSON = document.getElementById('generatedJSON');
+
+sendBtn.onclick = async () => {
+  const webhook = webhookInput.value.trim();
+  const content = messageInput.value.trim();
+  let embedObj = null;
+
+  try {
+    if(embedInput.value.trim()) {
+      const parsed = JSON.parse(embedInput.value);
+      embedObj = {
+        title: parsed.title || "",
+        desc: parsed.desc || "",
+        color: parsed.color || "#ffffff",
+        image: parsed.image || ""
+      };
+    }
+  } catch(e) {
+    alert("Ungültiges Embed JSON!");
+    return;
+  }
+
+  const msg = configMsg(webhook, { content, embed: embedObj });
+  generatedJSON.textContent = JSON.stringify(msg.payload, null, 2);
+
+  await sendMsg(msg, webhook);
+  alert("Nachricht gesendet!");
+};
+</script>
+
+</body>
+</html>
