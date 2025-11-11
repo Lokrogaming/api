@@ -2,308 +2,152 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LokroGaming API</title>
-<style>
-:root {
-  --bg: #0d0d0d;
-  --text: #f2f2f2;
-  --accent: #66e3ff;
-  --card-bg: rgba(255,255,255,0.05);
-  --card-radius: 14px;
-  --nav-height: 60px;
-}
-
-/* Body & Layout */
-body {
-  margin:0;
-  font-family:'Arial', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-}
-
-.container {
-  max-width: 1000px;
-  margin: 80px auto 40px;
-  padding: 0 20px;
-}
-
-/* Top Navigation */
-.topnav {
-  position: fixed;
-  top:0;
-  left:0;
-  right:0;
-  height: var(--nav-height);
-  background: rgba(20,20,20,0.95);
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  padding: 0 20px;
-  z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-}
-
-.topnav-left {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.topnav h1 {
-  margin:0;
-  font-size: 1.2rem;
-  color: var(--accent);
-}
-
-/* API List Dropdown */
-.api-list {
-  position: relative;
-}
-
-.api-list button {
-  background: var(--accent);
-  border:none;
-  color:#000;
-  padding:6px 12px;
-  border-radius:6px;
-  cursor:pointer;
-}
-
-.api-list-content {
-  display:none;
-  position:absolute;
-  top:36px;
-  left:0;
-  background: var(--card-bg);
-  border-radius:8px;
-  min-width:200px;
-  max-height:300px;
-  overflow-y:auto;
-  box-shadow:0 4px 16px rgba(0,0,0,0.6);
-}
-
-.api-list-content a {
-  display:block;
-  padding:8px 12px;
-  color: var(--text);
-  text-decoration:none;
-}
-
-.api-list-content a:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-.api-list:hover .api-list-content {
-  display:block;
-}
-
-/* Search */
-.topnav-right input[type="text"] {
-  padding:6px 12px;
-  border-radius:8px;
-  border:none;
-  outline:none;
-  font-size: 0.9rem;
-}
-
-/* Cards */
-.card {
-  background: var(--card-bg);
-  padding:20px;
-  border-radius: var(--card-radius);
-  margin:16px 0;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-}
-
-pre {
-  background:#111;
-  padding:12px;
-  border-radius: var(--card-radius);
-  overflow-x:auto;
-}
-
-a {
-  color: var(--accent);
-  text-decoration:none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-h2 {
-  border-bottom:1px solid #333;
-  padding-bottom:4px;
-  margin-top:24px;
-  color: var(--accent);
-}
-
-ul { padding-left: 18px; }
-
-/* Counter Section */
-.counters {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin: 60px 0;
-}
-
-.counter-card {
-  background: var(--card-bg);
-  border-radius: var(--card-radius);
-  padding: 30px;
-  text-align: center;
-  width: 200px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  transition: transform 0.3s ease;
-}
-
-.counter-card:hover {
-  transform: translateY(-6px);
-}
-
-.counter-number {
-  font-size: 2.2rem;
-  font-weight: bold;
-  color: var(--accent);
-}
-
-.counter-label {
-  font-size: 1rem;
-  color: var(--text);
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>betterJS – Auth & API Framework</title>
+<link rel="stylesheet" href="js/style.css">
+<script src="js/crypto.js"></script>
+<script src="js/betterJS.js"></script>
+<script src="js/ui.js"></script>
 </head>
 <body>
 
-<!-- Top Navigation -->
-<div class="topnav">
-  <div class="topnav-left">
-    <div class="api-list">
-      <button>APIs ▼</button>
-      <div class="api-list-content" id="apiList">
-        <a href="#crypting">Crypting API</a>
-      </div>
-    </div>
-    <h1>LokroGaming API</h1>
-    <a href="docs">Documentation</a>
-  </div>
-  <div class="topnav-right">
-    <input type="text" id="apiSearch" placeholder="API suchen...">
-  </div>
-</div>
+<header>
+  <h1>⚡ betterJS Auth & API Framework</h1>
+  <nav>
+    <button class="tablink active" onclick="ui.switchTab('authTab', this)">Login</button>
+    <button class="tablink" onclick="ui.switchTab('docsTab', this)">Docs</button>
+    <button class="tablink" onclick="ui.switchTab('apiTab', this)">API Demo</button>
+    <button class="tablink" onclick="ui.switchTab('setupTab', this)">Setup</button>
+  </nav>
+</header>
 
-<div class="container">
-  <p>Willkommen zur zentralen API-Übersicht. Hier findest du alle verfügbaren APIs von LokroGaming inkl. Docs, Usage und Hinweisen.</p>
+<main>
+  <!-- AUTH -->
+  <section id="authTab" class="tab active">
+    <h2>🔐 Benutzer-Login</h2>
 
-  <!-- ✅ Counter Cards -->
-  <div class="counters">
-    <div class="counter-card">
-      <div class="counter-number" data-target="100">0</div>
-      <div class="counter-label">Getrustete User</div>
+    <div id="unlockSection">
+      <p>Bitte trage deinen Freischaltcode ein, um Zugriff zu erhalten:</p>
+      <input id="unlockCode" placeholder="Freischaltcode (AES)">
+      <button onclick="handleUnlock()">Freischalten</button>
     </div>
-    <div class="counter-card">
-      <div class="counter-number" data-target="50">0</div>
-      <div class="counter-label">mal genutzt</div>
-    </div>
-    <div class="counter-card">
-      <div class="counter-number" data-target="10">0</div>
-      <div class="counter-label">Partnerprojekte</div>
-    </div>
-  </div>
 
-  <!-- Crypting API -->
-  <div class="card" id="crypting">
-    <h2>🔐 Crypting API</h2>
-    <p>Verschlüsselt und entschlüsselt Text clientseitig (AES-GCM + Base64), komplett ohne Backend.</p>
-    <h3>Einbindung:</h3>
-    <pre>
-&lt;script src="https://lokrogaming.github.io/api/crypt/crypting-ec.js"&gt;&lt;/script&gt;
-&lt;script src="https://lokrogaming.github.io/api/crypt/crypting-dc.js"&gt;&lt;/script&gt;
-    </pre>
-    <h3>Funktionen:</h3>
+    <div id="authBox" style="display:none;">
+      <input id="username" placeholder="Benutzername">
+      <input id="password" type="password" placeholder="Passwort">
+      <button onclick="handleRegister()">Registrieren</button>
+      <button onclick="handleLogin()">Login</button>
+    </div>
+
+    <div id="emailBox" style="display:none;">
+      <h3>Email-Registrierung (manuell)</h3>
+      <input id="emailInput" type="email" placeholder="Deine Email">
+      <input id="siteInput" placeholder="Deine Website (API-Host)">
+      <input id="nameInput" placeholder="Dein Name">
+      <button onclick="ui.sendUnlockRequest()">Freischaltcode anfordern</button>
+    </div>
+
+    <pre id="output"></pre>
+  </section>
+
+  <!-- DOCS -->
+  <section id="docsTab" class="tab">
+    <h2>📖 Dokumentation</h2>
+    <p><b>betterJS</b> ist ein serverloses Authentifizierungs-Framework.  
+      Du kannst User registrieren, verschlüsseln, Login validieren und deine App absichern – alles auf GitHub Pages!</p>
+
+    <h3>ConfigData Parameter</h3>
     <ul>
-      <li><b>window.cryptingEncoder</b>: encrypt(), combineOutput(), generatePassword()</li>
-      <li><b>window.cryptingDecoder</b>: decrypt()</li>
+      <li><code>registerMethod</code> – "manual" oder "auto"</li>
+      <li><code>encryptionLevel</code> – "l" / "m" / "h"</li>
+      <li><code>developerEmail</code> – Empfängeradresse für FormSubmit</li>
+      <li><code>unlockCode</code> – AES-verschlüsselter Developer-Code</li>
     </ul>
-    <h3>Usage Beispiel:</h3>
-    <pre>
-const pw = window.cryptingEncoder.generatePassword();
-const cipher = await window.cryptingEncoder.encrypt(pw, "Hallo Welt");
-const combined = window.cryptingEncoder.combineOutput(cipher, pw);
+  </section>
 
-const [b64, pw2] = combined.split(":");
-const plaintext = await window.cryptingDecoder.decrypt(pw2, b64);
-console.log(plaintext);
-    </pre>
-  </div>
-<div class="card" id="openSrc">
-    <h2>🔐 openStc API</h2>
-    <p>Verschlüsselt und entschlüsselt Text clientseitig (AES-GCM + Base64), komplett ohne Backend.</p>
-    <h3>Einbindung:</h3>
-    <pre>
-&lt;link href="https://lokrogaming.github.io/openSrc"&gt;
-&lt;script src="https://lokrogaming.github.io/api/crypt/crypting-dc.js"&gt;&lt;/script&gt;
-    </pre>
-    <h3>Funktionen:</h3>
-    <ul>
-      <li><b>window.cryptingEncoder</b>: encrypt(), combineOutput(), generatePassword()</li>
-      <li><b>window.cryptingDecoder</b>: decrypt()</li>
-    </ul>
-    <h3>Usage Beispiel:</h3>
-    <pre>
-const pw = window.cryptingEncoder.generatePassword();
-const cipher = await window.cryptingEncoder.encrypt(pw, "Hallo Welt");
-const combined = window.cryptingEncoder.combineOutput(cipher, pw);
+  <!-- API DEMO -->
+  <section id="apiTab" class="tab">
+    <h2>🧩 API Beispiel</h2>
+    <p>So kannst du betterJS-Funktionen in deiner eigenen App nutzen:</p>
+    <pre><code>betterJS.logInUser({ username:"max", password:"1234" });</code></pre>
 
-const [b64, pw2] = combined.split(":");
-const plaintext = await window.cryptingDecoder.decrypt(pw2, b64);
-console.log(plaintext);
-    </pre>
-  </div>
-  <!-- Hinweise -->
-  <div class="card">
-    <h2>⚠ Hinweise</h2>
-    <ul>
-      <li>Alle APIs laufen clientseitig – kein Backend nötig.</li>
-      <li>Die Einbindung erfolgt via &lt;script&gt; Tag.</li>
-      <li>Achte auf sichere Handhabung von Passwörtern und sensiblen Daten.</li>
-      <li>Für große Datenmengen oder produktive Anwendungen empfehlen wir serverseitige Lösungen.</li>
-    </ul>
-  </div>
-</div>
+    <button onclick="ui.demoAPI()">Testausgabe</button>
+    <pre id="apiOutput"></pre>
+  </section>
 
+  <!-- SETUP -->
+  <section id="setupTab" class="tab">
+    <h2>🛠️ Anleitung</h2>
+    <ol>
+      <li>Erstelle <code>src/JSON/userData.json</code></li>
+      <li>Setze alle Parameter in <code>configData</code></li>
+      <li>Deploye auf GitHub Pages</li>
+      <li>Verwende <b>FormSubmit</b> für E-Mail-Verbindungen</li>
+    </ol>
+  </section>
+</main>
+
+<footer>
+  <small>© 2025 betterJS | Serverless Auth System</small>
+</footer>
+
+<!-- CONFIGDATA -->
 <script>
-// API-Suche
-const searchInput = document.getElementById('apiSearch');
-searchInput.addEventListener('input', () => {
-  const filter = searchInput.value.toLowerCase();
-  const links = document.querySelectorAll('.api-list-content a');
-  links.forEach(link => {
-    link.style.display = link.textContent.toLowerCase().includes(filter) ? 'block' : 'none';
-  });
-});
+const configData = [{
+  "userData": "src/JSON/userData.json",
+  "registerMethod": "manual",
+  "developerEmail": "dev@example.com",
+  "unlockCode": "b64encodedAESEncryptedCode==",
+  "unlockKey": "meinPasswort123",
+  "encryptionLevel": "h",
+  "pwKeyLength": 12,
+  "colorSuccess": "#00d084",
+  "colorWarning": "#ffd43b",
+  "colorError": "#ff4d4d",
+  "showCookieBanner": true,
+  "cookieStorageKey": "betterJS_cookie",
+  "redirectAfterRgisteration": false
+}];
+const res = [{}];
 
-// Counter Animation
-const counters = document.querySelectorAll('.counter-number');
-counters.forEach(counter => {
-  const update = () => {
-    const target = +counter.getAttribute('data-target');
-    const current = +counter.innerText;
-    const increment = target / 80; // Geschwindigkeit
+betterJS.setConfig(configData);
+betterJS.setResponseVar(res);
 
-    if (current < target) {
-      counter.innerText = Math.ceil(current + increment);
-      requestAnimationFrame(update);
+async function handleUnlock(){
+  const codeInput = document.getElementById('unlockCode').value;
+  const enc = configData[0].unlockCode;
+  const key = configData[0].unlockKey;
+  try {
+    const dec = await cryptingEncoder.decryptAES(key, enc);
+    if(dec === codeInput){
+      document.getElementById('unlockSection').style.display='none';
+      document.getElementById('authBox').style.display='block';
+      ui.interpretResponse({level:1, content:{msg:"Freischaltung erfolgreich"}});
     } else {
-      counter.innerText = '+' + target;
+      ui.interpretResponse({level:3, content:{error:"Ungültiger Code"}});
     }
-  };
-  update();
-});
-</script>
+  } catch(e){
+    ui.interpretResponse({level:3, content:{error:"Fehler bei der Codeprüfung"}});
+  }
+}
 
+async function handleRegister(){
+  const user = {
+    username: document.getElementById('username').value,
+    password: document.getElementById('password').value
+  };
+  await betterJS.registerUser(user);
+  ui.interpretResponse(betterJS.latestResponse());
+}
+
+async function handleLogin(){
+  const user = {
+    username: document.getElementById('username').value,
+    password: document.getElementById('password').value
+  };
+  await betterJS.logInUser(user);
+  ui.interpretResponse(betterJS.latestResponse());
+}
+</script>
 </body>
 </html>

@@ -1,0 +1,203 @@
+const user = [{
+    "username": "max",
+    "password": "1234"
+}];
+const configData = [{
+    "userData": "FILEPATH", //src/JSON/userData.json
+    "registerMethod": "manual/auto(serverOnly)",
+    "forbiddenUsernames": "JSON/FILE",
+    "pwValidationParam": "JSON/FILE",
+    "logInTarget": "FILEPATH",
+    "redirectAfterRgisteration": Boolean,
+    "encryptionLevel": "1/2/3//low/medium/high//l/m/h", /*
+             low/l/1 => Base64 encryption
+             medium/m/2 => RSA 
+             high/h/3 (default) => AES-GCM || PBKDF2_ITER: 10000
+
+
+
+    */
+   "captchaMode": "open(default)/closed"
+}];
+let res = [{
+
+}];
+betterJS.setConfig(configData);
+betterJS.setResponseVar(res);
+
+function logIn(userIn) {
+betterJS.logInUser(user);
+let res = betterJS.latestResponse();
+}
+function registerUser(userIn) {
+betterJS.registerUser(user);
+let res = betterJS.latestResponse();
+}
+
+/*
+Erklärungen:
+
+  latestResponse liefert das: 
+  {"level": "1/2/3", "contentType": "plainText/HTML/JSON", "content": "je nach type", "hoverableInfoType": "HTML/PlainText/JSON""hoverableInfo": "HTML/Plaintext/JSON", "codes": "falls error oder warn*. 404, 403, 503"}
+
+  1 => Grün / Sucess
+  2 => Gelb / Warn
+  3 => Rot / Danger / Error
+  ;
+
+  * =
+  commonErrorCodes oder customCodes(meist 5-stellig nach vordefiniertem JSON(unveränderlich))
+;
+
+registerMethods: 
+manual: Developer muss im Config seine Email oder den Formsubmit.co-Code angeben.
+Auto: Der Code wird auf einem Server ausgeführt und die userData.json datei kann direkt verarbeitet werden. Die Passwörter und Usernames werden je nach encryptionLevel verschlüsselt. Für Level 3 nutze ich:
+Encryption: 
+window.cryptingEncoder = (function() {
+  const PBKDF2_ITER = 100000;
+  const SALT_LEN = 16;
+  const IV_LEN = 12;
+  const KEY_LEN = 256;
+
+  function toBase64(buffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  }
+
+  function fromBase64(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  function randBytes(len){
+    const b = new Uint8Array(len);
+    crypto.getRandomValues(b);
+    return b;
+  }
+
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const pwKey = await crypto.subtle.importKey(
+      'raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt, iterations: PBKDF2_ITER, hash:'SHA-256'},
+      pwKey,
+      {name:'AES-GCM', length: KEY_LEN},
+      false,
+      ['encrypt','decrypt']
+    );
+  }
+
+  function generatePassword(length=16){
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+    for (let i=0;i<length;i++){
+      result += chars.charAt(Math.floor(Math.random()*chars.length));
+    }
+    return result;
+  }
+
+  async function encrypt(password, plainText) {
+    const salt = randBytes(SALT_LEN);
+    const iv = randBytes(IV_LEN);
+    const key = await deriveKey(password, salt);
+    const enc = new TextEncoder();
+    const ct = await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, enc.encode(plainText));
+    const combined = new Uint8Array(salt.byteLength + iv.byteLength + ct.byteLength);
+    combined.set(salt,0);
+    combined.set(iv,SALT_LEN);
+    combined.set(new Uint8Array(ct), SALT_LEN + IV_LEN);
+    return toBase64(combined.buffer);
+  }
+
+  function combineOutput(encrypted, password){
+    return `${encrypted}:${password}`;
+  }
+
+  return { encrypt, combineOutput, generatePassword };
+})();
+
+Decryption:
+window.cryptingDecoder = (function() {
+  const PBKDF2_ITER = 100000;
+  const SALT_LEN = 16;
+  const IV_LEN = 12;
+  const KEY_LEN = 256;
+
+  function fromBase64(b64) {
+    const bin = atob(b64);
+    const bytes = new Uint8Array(bin.length);
+    for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return bytes.buffer;
+  }
+
+  async function deriveKey(password, salt) {
+    const enc = new TextEncoder();
+    const pwKey = await crypto.subtle.importKey(
+      'raw', enc.encode(password), {name:'PBKDF2'}, false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      {name:'PBKDF2', salt, iterations: PBKDF2_ITER, hash:'SHA-256'},
+      pwKey,
+      {name:'AES-GCM', length: KEY_LEN},
+      false,
+      ['encrypt','decrypt']
+    );
+  }
+
+  async function decrypt(password, b64combined) {
+    const buf = fromBase64(b64combined);
+    const data = new Uint8Array(buf);
+    if (data.length < SALT_LEN + IV_LEN + 16) throw new Error("Daten zu kurz / ungültiges Format.");
+    const salt = data.slice(0,SALT_LEN).buffer;
+    const iv = data.slice(SALT_LEN,SALT_LEN+IV_LEN).buffer;
+    const ct = data.slice(SALT_LEN+IV_LEN).buffer;
+    const key = await deriveKey(password, salt);
+    const plainBuf = await crypto.subtle.decrypt({name:'AES-GCM', iv}, key, ct);
+    return new TextDecoder().decode(plainBuf);
+  }
+
+  return { decrypt };
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/
+├── index.html
+├── js/
+│   ├── betterJS.js
+│   ├── crypto.js
+│   └── ui.js
+└── src/
+    └── JSON/
+        └── userData.json
+
+
+
+
+
+
+
+
+*/
