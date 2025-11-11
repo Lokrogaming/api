@@ -1,153 +1,104 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>betterJS – Auth & API Framework</title>
-<link rel="stylesheet" href="js/style.css">
-<script src="js/crypto.js"></script>
-<script src="js/betterJS.js"></script>
-<script src="js/ui.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>betterJS - Auth & API Framework</title>
+    <link rel="stylesheet" href="js/style.css">
+    <script src="js/crypto.js"></script>
+    <script src="js/betterJS.js"></script>
+    <script src="js/ui.js"></script>
 </head>
 <body>
+    <header class="modern-header">
+        <div class="header-content">
+            <h1 class="logo"><span class="logo-icon">⚡</span> betterJS Auth & API</h1>
+            <nav class="topnav" id="topnav">
+                <button class="tablink tablink-active" onclick="ui.switchTab('authTab', this)">Login</button>
+                <button class="tablink" onclick="ui.switchTab('docsTab', this)">Docs</button>
+                <button class="tablink" onclick="ui.switchTab('apiTab', this)">API Demo</button>
+                <button class="tablink" onclick="ui.switchTab('setupTab', this)">Setup</button>
+            </nav>
+        </div>
+    </header>
 
-<header>
-  <h1>⚡ betterJS Auth & API Framework</h1>
-  <nav>
-    <button class="tablink active" onclick="ui.switchTab('authTab', this)">Login</button>
-    <button class="tablink" onclick="ui.switchTab('docsTab', this)">Docs</button>
-    <button class="tablink" onclick="ui.switchTab('apiTab', this)">API Demo</button>
-    <button class="tablink" onclick="ui.switchTab('setupTab', this)">Setup</button>
-  </nav>
-</header>
+    <main class="container">
+        <section id="authTab" class="tab active tab-content">
+            <div class="card">
+                <h2>🔐 Benutzer-Login</h2>
+                <div id="loginBox" class="form-group">
+                    <input type="text" id="loginUsername" placeholder="Benutzername" class="input-field">
+                    <input type="password" id="loginPassword" placeholder="Passwort" class="input-field">
+                    <button onclick="ui.loginUser()" class="btn btn-primary">Login</button>
+                </div>
+                <div id="registerBox" class="form-group hidden">
+                    <h3>Neuen Account erstellen</h3>
+                    <input type="text" id="regUsername" placeholder="Benutzername" class="input-field">
+                    <input type="password" id="regPassword" placeholder="Passwort" class="input-field">
+                    <button onclick="ui.registerUser()" class="btn btn-primary">Registrieren</button>
+                </div>
+                <button onclick="ui.toggleRegister()" class="btn btn-secondary">Kein Account? Hier registrieren</button>
+            </div>
+            <div id="unlockSection" class="card hidden">
+                <h2>🔓 Account freigeschaltet</h2>
+                <p id="unlockedMessage"></p>
+                <button onclick="ui.logout()" class="btn btn-danger">Logout</button>
+            </div>
+        </section>
 
-<main>
-  <!-- AUTH -->
-  <section id="authTab" class="tab active">
-    <h2>🔐 Benutzer-Login</h2>
+        <section id="docsTab" class="tab tab-content">
+            <div class="card">
+                <h2>📚 Dokumentation</h2>
+                <div class="docs-grid">
+                    <div class="doc-item">
+                        <h3>🔐 Verschlüsselung</h3>
+                        <p>Usernames und Passwörter werden mit AES verschlüsselt gespeichert.</p>
+                    </div>
+                    <div class="doc-item">
+                        <h3>🔑 API Keys</h3>
+                        <p>Sichere API-Keys für externe Systeme.</p>
+                    </div>
+                    <div class="doc-item">
+                        <h3>🛡️ Sicherheit</h3>
+                        <p>Multi-Level Encryption mit konfigurierbaren Stufen.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div id="unlockSection">
-      <p>Bitte trage deinen Freischaltcode ein, um Zugriff zu erhalten:</p>
-      <input id="unlockCode" placeholder="Freischaltcode (AES)">
-      <button onclick="handleUnlock()">Freischalten</button>
-    </div>
+        <section id="apiTab" class="tab tab-content">
+            <div class="card">
+                <h2>🔌 API Demo</h2>
+                <div id="apiDemo" class="api-demo">
+                    <input type="text" id="apiEndpoint" placeholder="API Endpoint" class="input-field">
+                    <textarea id="apiBody" placeholder="Request Body (JSON)" class="input-field" rows="5"></textarea>
+                    <button onclick="ui.sendApiRequest()" class="btn btn-primary">Send Request</button>
+                    <div id="apiResponse" class="response-box hidden"></div>
+                </div>
+            </div>
+        </section>
 
-    <div id="authBox" style="display:none;">
-      <input id="username" placeholder="Benutzername">
-      <input id="password" type="password" placeholder="Passwort">
-      <button onclick="handleRegister()">Registrieren</button>
-      <button onclick="handleLogin()">Login</button>
-    </div>
+        <section id="setupTab" class="tab tab-content">
+            <div class="card">
+                <h2>⚙️ Setup & Konfiguration</h2>
+                <p>Hier können Sie das System konfigurieren.</p>
+                <div id="configPanel" class="config-panel">
+                    <label>
+                        <span>Encryption Level:</span>
+                        <select id="encryptionLevel" class="input-field">
+                            <option value="1">Level 1 - Base64</option>
+                            <option value="2">Level 2 - RSA</option>
+                            <option value="3" selected>Level 3 - AES</option>
+                        </select>
+                    </label>
+                    <button onclick="ui.saveConfig()" class="btn btn-primary">Speichern</button>
+                </div>
+            </div>
+        </section>
+    </main>
 
-    <div id="emailBox" style="display:none;">
-      <h3>Email-Registrierung (manuell)</h3>
-      <input id="emailInput" type="email" placeholder="Deine Email">
-      <input id="siteInput" placeholder="Deine Website (API-Host)">
-      <input id="nameInput" placeholder="Dein Name">
-      <button onclick="ui.sendUnlockRequest()">Freischaltcode anfordern</button>
-    </div>
-
-    <pre id="output"></pre>
-  </section>
-
-  <!-- DOCS -->
-  <section id="docsTab" class="tab">
-    <h2>📖 Dokumentation</h2>
-    <p><b>betterJS</b> ist ein serverloses Authentifizierungs-Framework.  
-      Du kannst User registrieren, verschlüsseln, Login validieren und deine App absichern – alles auf GitHub Pages!</p>
-
-    <h3>ConfigData Parameter</h3>
-    <ul>
-      <li><code>registerMethod</code> – "manual" oder "auto"</li>
-      <li><code>encryptionLevel</code> – "l" / "m" / "h"</li>
-      <li><code>developerEmail</code> – Empfängeradresse für FormSubmit</li>
-      <li><code>unlockCode</code> – AES-verschlüsselter Developer-Code</li>
-    </ul>
-  </section>
-
-  <!-- API DEMO -->
-  <section id="apiTab" class="tab">
-    <h2>🧩 API Beispiel</h2>
-    <p>So kannst du betterJS-Funktionen in deiner eigenen App nutzen:</p>
-    <pre><code>betterJS.logInUser({ username:"max", password:"1234" });</code></pre>
-
-    <button onclick="ui.demoAPI()">Testausgabe</button>
-    <pre id="apiOutput"></pre>
-  </section>
-
-  <!-- SETUP -->
-  <section id="setupTab" class="tab">
-    <h2>🛠️ Anleitung</h2>
-    <ol>
-      <li>Erstelle <code>src/JSON/userData.json</code></li>
-      <li>Setze alle Parameter in <code>configData</code></li>
-      <li>Deploye auf GitHub Pages</li>
-      <li>Verwende <b>FormSubmit</b> für E-Mail-Verbindungen</li>
-    </ol>
-  </section>
-</main>
-
-<footer>
-  <small>© 2025 betterJS | Serverless Auth System</small>
-</footer>
-
-<!-- CONFIGDATA -->
-<script>
-const configData = [{
-  "userData": "src/JSON/userData.json",
-  "registerMethod": "manual",
-  "developerEmail": "dev@example.com",
-  "unlockCode": "b64encodedAESEncryptedCode==",
-  "unlockKey": "meinPasswort123",
-  "encryptionLevel": "h",
-  "pwKeyLength": 12,
-  "colorSuccess": "#00d084",
-  "colorWarning": "#ffd43b",
-  "colorError": "#ff4d4d",
-  "showCookieBanner": true,
-  "cookieStorageKey": "betterJS_cookie",
-  "redirectAfterRgisteration": false
-}];
-const res = [{}];
-
-betterJS.setConfig(configData);
-betterJS.setResponseVar(res);
-
-async function handleUnlock(){
-  const codeInput = document.getElementById('unlockCode').value;
-  const enc = configData[0].unlockCode;
-  const key = configData[0].unlockKey;
-  try {
-    const dec = await cryptingEncoder.decryptAES(key, enc);
-    if(dec === codeInput){
-      document.getElementById('unlockSection').style.display='none';
-      document.getElementById('authBox').style.display='block';
-      ui.interpretResponse({level:1, content:{msg:"Freischaltung erfolgreich"}});
-    } else {
-      ui.interpretResponse({level:3, content:{error:"Ungültiger Code"}});
-    }
-  } catch(e){
-    ui.interpretResponse({level:3, content:{error:"Fehler bei der Codeprüfung"}});
-  }
-}
-
-async function handleRegister(){
-  const user = {
-    username: document.getElementById('username').value,
-    password: document.getElementById('password').value
-  };
-  await betterJS.registerUser(user);
-  ui.interpretResponse(betterJS.latestResponse());
-}
-
-async function handleLogin(){
-  const user = {
-    username: document.getElementById('username').value,
-    password: document.getElementById('password').value
-  };
-  await betterJS.logInUser(user);
-  ui.interpretResponse(betterJS.latestResponse());
-}
-</script>
+    <footer class="modern-footer">
+        <p>&copy; 2025 betterJS Framework - Secure Authentication System</p>
+    </footer>
 </body>
 </html>

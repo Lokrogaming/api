@@ -1,45 +1,104 @@
 window.ui = (function(){
-    function interpretResponse(r){
-      const out = document.getElementById("output");
-      const cfg = configData[0];
-      const colors = {1:cfg.colorSuccess, 2:cfg.colorWarning, 3:cfg.colorError};
-      out.style.color = colors[r.level] || "white";
-      out.textContent = JSON.stringify(r.content, null, 2);
+    function switchTab(tabId, btn){
+        // Hide all tabs
+        const tabs = document.querySelectorAll('.tab');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        
+        // Remove active class from all buttons
+        const buttons = document.querySelectorAll('.tablink');
+        buttons.forEach(button => button.classList.remove('tablink-active'));
+        
+        // Show selected tab
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('tablink-active');
     }
-  
-    function switchTab(id, el){
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.tablink').forEach(b=>b.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      el.classList.add('active');
+
+    function loginUser(){
+        const username = document.getElementById('loginUsername').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if(!username || !password){
+            alert('Bitte Benutzername und Passwort eingeben');
+            return;
+        }
+        
+        betterJS.loginUser({username, password});
+        const response = betterJS.latestResponse();
+        
+        if(response.level === 1){
+            showUnlockSection(username);
+        } else {
+            alert(response.content?.error || 'Login fehlgeschlagen');
+        }
     }
-  
-    function demoAPI(){
-      document.getElementById('apiOutput').textContent = JSON.stringify({
-        example: "betterJS.logInUser({username:'demo', password:'demo'})",
-        response: {level:1, msg:"Login success"}
-      }, null, 2);
+
+    function registerUser(){
+        const username = document.getElementById('regUsername').value;
+        const password = document.getElementById('regPassword').value;
+        
+        if(!username || !password){
+            alert('Bitte Benutzername und Passwort eingeben');
+            return;
+        }
+        
+        betterJS.registerUser({username, password});
+        const response = betterJS.latestResponse();
+        
+        if(response.level === 1){
+            alert('Registrierung erfolgreich!');
+            document.getElementById('regUsername').value = '';
+            document.getElementById('regPassword').value = '';
+            toggleRegister();
+        }
     }
-  
-    function sendUnlockRequest(){
-      const cfg = configData[0];
-      const email = document.getElementById('emailInput').value;
-      const site = document.getElementById('siteInput').value;
-      const name = document.getElementById('nameInput').value;
-  
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = `https://formsubmit.co/${cfg.developerEmail}`;
-      form.innerHTML = `
-        <input type="hidden" name="name" value="${name}">
-        <input type="hidden" name="email" value="${email}">
-        <input type="hidden" name="website" value="${site}">
-        <input type="hidden" name="requested" value="betterJS unlock code request">
-      `;
-      document.body.appendChild(form);
-      form.submit();
+
+    function toggleRegister(){
+        const loginBox = document.getElementById('loginBox');
+        const registerBox = document.getElementById('registerBox');
+        
+        loginBox.classList.toggle('hidden');
+        registerBox.classList.toggle('hidden');
     }
-  
-    return { interpretResponse, switchTab, demoAPI, sendUnlockRequest };
-  })();
-  
+
+    function showUnlockSection(username){
+        document.getElementById('loginBox').classList.add('hidden');
+        document.getElementById('registerBox').classList.add('hidden');
+        document.getElementById('unlockSection').classList.remove('hidden');
+        document.getElementById('unlockedMessage').textContent = `Willkommen, ${username}! Dein Account wurde freigeschaltet.`;
+    }
+
+    function logout(){
+        document.getElementById('unlockSection').classList.add('hidden');
+        document.getElementById('loginBox').classList.remove('hidden');
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        localStorage.removeItem('betterJS_userData');
+    }
+
+    function sendApiRequest(){
+        const endpoint = document.getElementById('apiEndpoint').value;
+        const body = document.getElementById('apiBody').value;
+        
+        if(!endpoint){
+            alert('Bitte API Endpoint eingeben');
+            return;
+        }
+        
+        try {
+            const requestBody = body ? JSON.parse(body) : {};
+            const response = {endpoint, request: requestBody};
+            document.getElementById('apiResponse').textContent = JSON.stringify(response, null, 2);
+            document.getElementById('apiResponse').classList.remove('hidden');
+        } catch(e){
+            alert('Fehler beim JSON parsen: ' + e.message);
+        }
+    }
+
+    function saveConfig(){
+        const level = document.getElementById('encryptionLevel').value;
+        localStorage.setItem('betterJS_encryptionLevel', level);
+        alert('Konfiguration gespeichert!');
+    }
+
+    return { switchTab, loginUser, registerUser, toggleRegister, logout, sendApiRequest, saveConfig };
+})();
